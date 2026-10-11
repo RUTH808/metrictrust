@@ -1,0 +1,134 @@
+[
+  {
+    "id": "orders_key",
+    "severity": "error",
+    "description": "Primary keys must be non-null and unique",
+    "sql": "SELECT order_id,COUNT(*) occurrences FROM orders GROUP BY order_id HAVING COUNT(*)>1 OR order_id IS NULL"
+  },
+  {
+    "id": "customers_key",
+    "severity": "error",
+    "description": "Primary keys must be non-null and unique",
+    "sql": "SELECT customer_id,COUNT(*) occurrences FROM customers GROUP BY customer_id HAVING COUNT(*)>1 OR customer_id IS NULL"
+  },
+  {
+    "id": "products_key",
+    "severity": "error",
+    "description": "Primary keys must be non-null and unique",
+    "sql": "SELECT product_id,COUNT(*) occurrences FROM products GROUP BY product_id HAVING COUNT(*)>1 OR product_id IS NULL"
+  },
+  {
+    "id": "sellers_key",
+    "severity": "error",
+    "description": "Primary keys must be non-null and unique",
+    "sql": "SELECT seller_id,COUNT(*) occurrences FROM sellers GROUP BY seller_id HAVING COUNT(*)>1 OR seller_id IS NULL"
+  },
+  {
+    "id": "items_key",
+    "severity": "error",
+    "description": "Primary keys must be non-null and unique",
+    "sql": "SELECT order_id,order_item_id,COUNT(*) occurrences FROM items GROUP BY order_id,order_item_id HAVING COUNT(*)>1 OR order_id IS NULL OR order_item_id IS NULL"
+  },
+  {
+    "id": "payments_key",
+    "severity": "error",
+    "description": "Primary keys must be non-null and unique",
+    "sql": "SELECT order_id,payment_sequential,COUNT(*) occurrences FROM payments GROUP BY order_id,payment_sequential HAVING COUNT(*)>1 OR order_id IS NULL OR payment_sequential IS NULL"
+  },
+  {
+    "id": "items_orders_fk",
+    "severity": "error",
+    "description": "Child keys must reference existing parent records",
+    "sql": "SELECT c.* FROM items c LEFT JOIN orders p ON c.order_id=p.order_id WHERE p.order_id IS NULL"
+  },
+  {
+    "id": "payments_orders_fk",
+    "severity": "error",
+    "description": "Child keys must reference existing parent records",
+    "sql": "SELECT c.* FROM payments c LEFT JOIN orders p ON c.order_id=p.order_id WHERE p.order_id IS NULL"
+  },
+  {
+    "id": "reviews_orders_fk",
+    "severity": "error",
+    "description": "Child keys must reference existing parent records",
+    "sql": "SELECT c.* FROM reviews c LEFT JOIN orders p ON c.order_id=p.order_id WHERE p.order_id IS NULL"
+  },
+  {
+    "id": "orders_customers_fk",
+    "severity": "error",
+    "description": "Child keys must reference existing parent records",
+    "sql": "SELECT c.* FROM orders c LEFT JOIN customers p ON c.customer_id=p.customer_id WHERE p.customer_id IS NULL"
+  },
+  {
+    "id": "items_products_fk",
+    "severity": "error",
+    "description": "Child keys must reference existing parent records",
+    "sql": "SELECT c.* FROM items c LEFT JOIN products p ON c.product_id=p.product_id WHERE p.product_id IS NULL"
+  },
+  {
+    "id": "items_sellers_fk",
+    "severity": "error",
+    "description": "Child keys must reference existing parent records",
+    "sql": "SELECT c.* FROM items c LEFT JOIN sellers p ON c.seller_id=p.seller_id WHERE p.seller_id IS NULL"
+  },
+  {
+    "id": "negative_item_amount",
+    "severity": "error",
+    "description": "Item price and freight must be non-negative",
+    "sql": "SELECT * FROM items WHERE TRY_CAST(price AS DOUBLE)<0 OR TRY_CAST(freight_value AS DOUBLE)<0"
+  },
+  {
+    "id": "invalid_item_amount",
+    "severity": "error",
+    "description": "Item amounts must parse as finite numbers",
+    "sql": "SELECT * FROM items WHERE TRY_CAST(price AS DOUBLE) IS NULL OR TRY_CAST(freight_value AS DOUBLE) IS NULL OR NOT isfinite(TRY_CAST(price AS DOUBLE)) OR NOT isfinite(TRY_CAST(freight_value AS DOUBLE))"
+  },
+  {
+    "id": "negative_payment",
+    "severity": "error",
+    "description": "Payments must be non-negative",
+    "sql": "SELECT * FROM payments WHERE TRY_CAST(payment_value AS DOUBLE)<0"
+  },
+  {
+    "id": "invalid_payment",
+    "severity": "error",
+    "description": "Payments must parse as finite numbers",
+    "sql": "SELECT * FROM payments WHERE TRY_CAST(payment_value AS DOUBLE) IS NULL OR NOT isfinite(TRY_CAST(payment_value AS DOUBLE))"
+  },
+  {
+    "id": "invalid_purchase_time",
+    "severity": "error",
+    "description": "Purchase timestamps must be present and parseable",
+    "sql": "SELECT * FROM orders WHERE TRY_CAST(order_purchase_timestamp AS TIMESTAMP) IS NULL"
+  },
+  {
+    "id": "delivery_before_purchase",
+    "severity": "error",
+    "description": "Delivery cannot precede purchase",
+    "sql": "SELECT * FROM orders WHERE TRY_CAST(order_delivered_customer_date AS TIMESTAMP)<TRY_CAST(order_purchase_timestamp AS TIMESTAMP)"
+  },
+  {
+    "id": "missing_delivered_time",
+    "severity": "warning",
+    "description": "Delivered orders should have a valid customer-delivery timestamp",
+    "sql": "SELECT * FROM orders WHERE order_status='delivered' AND TRY_CAST(order_delivered_customer_date AS TIMESTAMP) IS NULL"
+  },
+  {
+    "id": "invalid_review_score",
+    "severity": "error",
+    "description": "Review score must be an integer from 1 to 5",
+    "sql": "SELECT * FROM reviews WHERE TRY_CAST(review_score AS DOUBLE) IS NULL OR TRY_CAST(review_score AS DOUBLE) NOT IN (1,2,3,4,5)"
+  },
+  {
+    "id": "missing_items",
+    "severity": "warning",
+    "description": "Orders without items require investigation",
+    "sql": "SELECT o.order_id,o.order_status FROM orders o LEFT JOIN items i USING(order_id) WHERE i.order_id IS NULL"
+  },
+  {
+    "id": "payment_reconciliation",
+    "severity": "warning",
+    "description": "Aggregate items and payments separately; flag absolute differences above BRL 0.05",
+    "sql": "WITH i AS(SELECT order_id,SUM(TRY_CAST(price AS DECIMAL(18,2))+TRY_CAST(freight_value AS DECIMAL(18,2))) expected_brl FROM items GROUP BY 1),p AS(SELECT order_id,SUM(TRY_CAST(payment_value AS DECIMAL(18,2))) actual_brl FROM payments GROUP BY 1) SELECT COALESCE(i.order_id,p.order_id) order_id,expected_brl,actual_brl,actual_brl-expected_brl delta_brl FROM i FULL OUTER JOIN p USING(order_id) WHERE expected_brl IS NULL OR actual_brl IS NULL OR ABS(actual_brl-expected_brl)>0.05"
+  }
+]

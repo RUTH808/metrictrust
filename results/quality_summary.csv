@@ -1,0 +1,23 @@
+rule,severity,failed_records,status,description
+orders_key,error,0,PASS,Primary keys must be non-null and unique
+customers_key,error,0,PASS,Primary keys must be non-null and unique
+products_key,error,0,PASS,Primary keys must be non-null and unique
+sellers_key,error,0,PASS,Primary keys must be non-null and unique
+items_key,error,0,PASS,Primary keys must be non-null and unique
+payments_key,error,0,PASS,Primary keys must be non-null and unique
+items_orders_fk,error,0,PASS,Child keys must reference existing parent records
+payments_orders_fk,error,0,PASS,Child keys must reference existing parent records
+reviews_orders_fk,error,0,PASS,Child keys must reference existing parent records
+orders_customers_fk,error,0,PASS,Child keys must reference existing parent records
+items_products_fk,error,0,PASS,Child keys must reference existing parent records
+items_sellers_fk,error,0,PASS,Child keys must reference existing parent records
+negative_item_amount,error,0,PASS,Item price and freight must be non-negative
+invalid_item_amount,error,0,PASS,Item amounts must parse as finite numbers
+negative_payment,error,0,PASS,Payments must be non-negative
+invalid_payment,error,0,PASS,Payments must parse as finite numbers
+invalid_purchase_time,error,0,PASS,Purchase timestamps must be present and parseable
+delivery_before_purchase,error,0,PASS,Delivery cannot precede purchase
+missing_delivered_time,warning,8,FAIL,Delivered orders should have a valid customer-delivery timestamp
+invalid_review_score,error,0,PASS,Review score must be an integer from 1 to 5
+missing_items,warning,775,FAIL,Orders without items require investigation
+payment_reconciliation,warning,1036,FAIL,Aggregate items and payments separately; flag absolute differences above BRL 0.05

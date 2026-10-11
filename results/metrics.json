@@ -1,0 +1,211 @@
+{
+  "dataset": "Olist public marketplace data",
+  "source_rows": {
+    "orders": 99441,
+    "items": 112650,
+    "payments": 103886,
+    "reviews": 99224,
+    "customers": 99441,
+    "products": 32951,
+    "sellers": 3095
+  },
+  "rules": 22,
+  "failed_rules": 3,
+  "blocking_rules": 0,
+  "audit_seconds": 1.8419844859963632,
+  "join_comparison": {
+    "safe_payments_brl": 16008872.12,
+    "naive_join_payments_brl": 20308134.71
+  },
+  "checks": [
+    {
+      "rule": "orders_key",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Primary keys must be non-null and unique"
+    },
+    {
+      "rule": "customers_key",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Primary keys must be non-null and unique"
+    },
+    {
+      "rule": "products_key",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Primary keys must be non-null and unique"
+    },
+    {
+      "rule": "sellers_key",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Primary keys must be non-null and unique"
+    },
+    {
+      "rule": "items_key",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Primary keys must be non-null and unique"
+    },
+    {
+      "rule": "payments_key",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Primary keys must be non-null and unique"
+    },
+    {
+      "rule": "items_orders_fk",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Child keys must reference existing parent records"
+    },
+    {
+      "rule": "payments_orders_fk",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Child keys must reference existing parent records"
+    },
+    {
+      "rule": "reviews_orders_fk",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Child keys must reference existing parent records"
+    },
+    {
+      "rule": "orders_customers_fk",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Child keys must reference existing parent records"
+    },
+    {
+      "rule": "items_products_fk",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Child keys must reference existing parent records"
+    },
+    {
+      "rule": "items_sellers_fk",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Child keys must reference existing parent records"
+    },
+    {
+      "rule": "negative_item_amount",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Item price and freight must be non-negative"
+    },
+    {
+      "rule": "invalid_item_amount",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Item amounts must parse as finite numbers"
+    },
+    {
+      "rule": "negative_payment",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Payments must be non-negative"
+    },
+    {
+      "rule": "invalid_payment",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Payments must parse as finite numbers"
+    },
+    {
+      "rule": "invalid_purchase_time",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Purchase timestamps must be present and parseable"
+    },
+    {
+      "rule": "delivery_before_purchase",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Delivery cannot precede purchase"
+    },
+    {
+      "rule": "missing_delivered_time",
+      "severity": "warning",
+      "failed_records": 8,
+      "status": "FAIL",
+      "description": "Delivered orders should have a valid customer-delivery timestamp"
+    },
+    {
+      "rule": "invalid_review_score",
+      "severity": "error",
+      "failed_records": 0,
+      "status": "PASS",
+      "description": "Review score must be an integer from 1 to 5"
+    },
+    {
+      "rule": "missing_items",
+      "severity": "warning",
+      "failed_records": 775,
+      "status": "FAIL",
+      "description": "Orders without items require investigation"
+    },
+    {
+      "rule": "payment_reconciliation",
+      "severity": "warning",
+      "failed_records": 1036,
+      "status": "FAIL",
+      "description": "Aggregate items and payments separately; flag absolute differences above BRL 0.05"
+    }
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "cpu": "AMD EPYC 9V74 80-Core Processor"
+  },
+  "source_manifest": {
+    "orders": {
+      "sha256": "8df58ef3d2d7e9944010f7beecd9b75367f5588ec6e3c91cec19ae3345ef9ecf",
+      "bytes": 17654914
+    },
+    "items": {
+      "sha256": "0bc4d068c4fe38cbb01bd90e8746e3c613fe7b4baef75fab7b0e329701c3e279",
+      "bytes": 15438671
+    },
+    "payments": {
+      "sha256": "4f713964f2815dbbaa40b9488268c55aac3627bfce5aa96cf58d1f3616de3cc0",
+      "bytes": 5777138
+    },
+    "reviews": {
+      "sha256": "012b61c7593e34f51fa614efdf802b9c7056ce6aae5307ddb93236e7cfc797d7",
+      "bytes": 14451670
+    },
+    "customers": {
+      "sha256": "983a422239e1712ded753b3bf9ecf47dc73f144d306029dcfa99e70a226883d2",
+      "bytes": 9033957
+    },
+    "products": {
+      "sha256": "3e6569628a17fbc75fd206ee357b59e20364b9afa90f5b6cd5b4d624c58aa9cc",
+      "bytes": 2379446
+    },
+    "sellers": {
+      "sha256": "1f643d2b950373b85735e7794b20986f528d7a000432e7c6f9bcbb44d0846a0e",
+      "bytes": 174703
+    }
+  }
+}

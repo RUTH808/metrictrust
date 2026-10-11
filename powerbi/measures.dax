@@ -1,0 +1,6 @@
+// Import quality_summary.csv; create each measure separately.
+Checks = COUNTROWS(quality_summary)
+Failed Checks = CALCULATE([Checks], quality_summary[status] = "FAIL")
+Blocking Checks = CALCULATE([Checks], quality_summary[status] = "FAIL", quality_summary[severity] = "error")
+Passing % = DIVIDE([Checks] - [Failed Checks], [Checks])
+// Do not sum failed_records as unique bad records: rows can fail multiple rules.
